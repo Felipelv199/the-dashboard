@@ -1,4 +1,7 @@
 import app from './app';
+import dotenv from 'dotenv';
 
-const port = 8080;
-app.listen(port, () => console.log('Litening on port: ', port));
+dotenv.config();
+app.listen(process.env.PORT, () =>
+  console.log('Litening on port', process.env.PORT)
+);
