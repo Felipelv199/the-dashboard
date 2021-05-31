@@ -98,6 +98,7 @@ export const uploadFile = async (req, res) => {
   const { file } = req.files;
   const workbook = new Workbook();
   let workbookFile;
+
   try {
     workbookFile = await workbook.xlsx.load(file.data);
   } catch (error) {
@@ -110,7 +111,7 @@ export const uploadFile = async (req, res) => {
   const sheet = workbookFile.worksheets[0];
   let sheetHeaders = {};
   let docsUploadedCounter = 0;
-  sheet.getRows(0, 1).forEach((row) =>
+  sheet.getRows(1, 1).forEach((row) =>
     row.eachCell(
       (_, colNumber) =>
         (sheetHeaders = {
@@ -120,8 +121,9 @@ export const uploadFile = async (req, res) => {
     )
   );
   const rows = sheet.getRows(2, sheet.rowCount);
+
   await Promise.all(
-    rows.map(async (row, rowNumber) => {
+    rows.map(async (row) => {
       let doc = {};
       row.eachCell(
         { includeEmpty: true },
