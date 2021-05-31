@@ -95,11 +95,11 @@ export const createDataPiece = (req, res) => {
 };
 
 export const uploadFile = async (req, res) => {
-  const { file } = req.files;
+  const { files } = req.files;
   const workbook = new Workbook();
   let workbookFile;
   try {
-    workbookFile = await workbook.xlsx.load(file.data);
+    workbookFile = await workbook.xlsx.load(files.data);
   } catch (error) {
     res
       .status(500)

@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 
+
 mongoose.connect(process.env.MONGOOSE_URI_DEV, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
