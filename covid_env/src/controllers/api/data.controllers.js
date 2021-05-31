@@ -2,95 +2,7 @@ import { Workbook } from 'exceljs';
 import DataPiece from '../../models/DataPiece';
 import dataPieceModelKeys from '../../static/api/dataPieceModelKeys.json';
 
-export const createDataPiece = (req, res) => {
-  const {
-    idRegistro,
-    origen,
-    sector,
-    entidadUm,
-    sexo,
-    entidadNac,
-    entidadRes,
-    municipioRes,
-    tipoPaciente,
-    fechaIngreso,
-    fechaSintomas,
-    fechaDef,
-    intubado,
-    neumonia,
-    edad,
-    nacionalidad,
-    embarazo,
-    hablaLenguaIndig,
-    indigena,
-    diabetes,
-    epoc,
-    asma,
-    inmusupr,
-    hipertension,
-    otraCom,
-    cardiovascular,
-    obesidad,
-    renalCronica,
-    tabaquismo,
-    otroCaso,
-    tomaMuestraLab,
-    resultadoLab,
-    tomaMuestraAntigeno,
-    resultadoAntigeno,
-    clasificacionFinal,
-    migrante,
-    paisNacionalidad,
-    paisOrigen,
-    uci,
-  } = req.body;
-  if (
-    !idRegistro ||
-    !origen ||
-    !sector ||
-    !entidadUm ||
-    !sexo ||
-    !entidadNac ||
-    !entidadRes ||
-    !municipioRes ||
-    !tipoPaciente ||
-    !fechaIngreso ||
-    !fechaSintomas ||
-    !fechaDef ||
-    !intubado ||
-    !neumonia ||
-    !edad ||
-    !nacionalidad ||
-    !embarazo ||
-    !hablaLenguaIndig ||
-    !indigena ||
-    !diabetes ||
-    !epoc ||
-    !asma ||
-    !inmusupr ||
-    !hipertension ||
-    !otraCom ||
-    !cardiovascular ||
-    !obesidad ||
-    !renalCronica ||
-    !tabaquismo ||
-    !otroCaso ||
-    !tomaMuestraLab ||
-    !resultadoLab ||
-    !tomaMuestraAntigeno ||
-    !resultadoAntigeno ||
-    !clasificacionFinal ||
-    !migrante ||
-    !paisNacionalidad ||
-    !paisOrigen ||
-    !uci
-  ) {
-    res.status(400).send({
-      error: 'Bad Request',
-      message: "You don't provide all the data needed",
-    });
-    return;
-  }
+export const createDataPiece = (_, res) => {
   res.send({ message: 'Piece of data created' });
 };
 
@@ -98,7 +10,6 @@ export const uploadFile = async (req, res) => {
   const { files } = req.files;
   const workbook = new Workbook();
   let workbookFile;
-
   try {
     workbookFile = await workbook.xlsx.load(files.data);
   } catch (error) {
@@ -107,21 +18,36 @@ export const uploadFile = async (req, res) => {
       .send({ error: 'Internal Server Error', message: error.message });
     return;
   }
-
   const sheet = workbookFile.worksheets[0];
   let sheetHeaders = {};
   let docsUploadedCounter = 0;
+  let validColumns = true;
   sheet.getRows(1, 1).forEach((row) =>
-    row.eachCell(
-      (_, colNumber) =>
-        (sheetHeaders = {
-          ...sheetHeaders,
-          [colNumber]: dataPieceModelKeys[colNumber - 1],
-        })
-    )
+    row.eachCell((cell, colNumber) => {
+      const valueParsed = cell.value.split('_').join('');
+      if (
+        valueParsed.toLowerCase() !==
+        dataPieceModelKeys[colNumber - 1].toLowerCase()
+      ) {
+        validColumns = validColumns && false;
+      }
+      sheetHeaders = {
+        ...sheetHeaders,
+        [colNumber]: dataPieceModelKeys[colNumber - 1],
+      };
+    })
   );
+  if (!validColumns) {
+    res
+      .status(400)
+      .send({
+        error: 'Bad Request',
+        message: 'Some columns are missing inside the first sheet',
+      })
+      .end();
+    return;
+  }
   const rows = sheet.getRows(2, sheet.rowCount);
-
   await Promise.all(
     rows.map(async (row) => {
       let doc = {};
@@ -129,18 +55,25 @@ export const uploadFile = async (req, res) => {
         { includeEmpty: true },
         (cell) => (doc = { ...doc, [sheetHeaders[cell.col]]: cell.value })
       );
-      const queryDoc = await DataPiece.findOne({
-        idRegistro: doc['idRegistro'],
-      });
+      let queryDoc;
+      try {
+        queryDoc = await DataPiece.findOne({
+          idRegistro: doc['idRegistro'],
+        });
+      } catch (error) {
+        res
+          .status(500)
+          .send({ error: 'Internal Server Error', message: error.message });
+        return;
+      }
       if (queryDoc === null) {
         try {
           await DataPiece.create(doc);
           docsUploadedCounter += 1;
         } catch (error) {
-          res.status(500).send({
-            error: 'Internal Server Error',
-            message: error.message,
-          });
+          res
+            .status(500)
+            .send({ error: 'Internal Server Error', message: error.message });
           return;
         }
       }
