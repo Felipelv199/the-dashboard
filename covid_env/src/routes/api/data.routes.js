@@ -4,7 +4,8 @@ import {
   uploadFile,
   getDataByAgeRange,
   getBySex,
-  getDecease
+  getDecease,
+  getPatients
 } from '../../controllers/api/data.controllers';
 
 const router = Router();
@@ -14,5 +15,6 @@ router.post('/file', uploadFile);
 router.get('/', getDataByAgeRange);
 router.get('/sex', getBySex);
 router.get('/decease', getDecease)
+router.get('/patient', getPatients);
 
 export default router;
