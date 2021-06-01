@@ -1,14 +1,14 @@
 import { Router } from 'express';
 import {
-  createDataPiece,
   uploadFile,
   getDataByAgeRange,
+  getData,
 } from '../../controllers/api/data.controllers';
 
 const router = Router();
 
-router.post('/', createDataPiece);
+router.get('/', getData);
 router.post('/file', uploadFile);
-router.get('/', getDataByAgeRange);
+router.get('/age', getDataByAgeRange);
 
 export default router;
