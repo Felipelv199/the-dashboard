@@ -111,3 +111,35 @@ export const getDataByAgeRange = async (req, res) => {
   });
   res.send(queryDocs);
 };
+
+export const getBySex = async (req, res ) => {
+  const sex = (req.query.sex).toUpperCase();
+  console.log(`Request sex: ${sex}`)
+  if ( sex ){
+    if ( sex === "HOMBRE" || sex === "MUJER"){
+      const queryBySex = await DataPiece.find(
+        { sexo : { $eq: sex } 
+      });
+      res.send( queryBySex );
+    }
+    else{
+      res.status(400).json({
+        error: 'Bad Request',
+        message: 'Sex option invalid. Only valid sexes: "HOMBRE" & "MUJER"',
+      });
+    }
+  }
+  else{
+    res.status(400).json({
+      error: 'Bad Request',
+      message: 'Sex parameter not indicated',
+    });
+  }
+}
+
+export const getDecease = async (req, res) => {
+  const queryDecease = await DataPiece.find( { fechaDef: { $ne: null} }, ['diabetes', 'epoc', 'asma', 'inmusupr', 'hipertension', 'cardiovascular', 'obesidad', 'renalCronica', 'tabaquismo','fechaDef']);
+  res.send( queryDecease );
+}
+
+
