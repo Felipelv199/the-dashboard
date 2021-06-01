@@ -113,14 +113,19 @@ export const getDataByAgeRange = async (req, res) => {
   res.send(queryDocs);
 };
 
+const querySex = async ( sex ) => {
+  return await DataPiece.find(
+    { sexo : { $eq: sex } 
+  }).sort( { edad: 'asc'});
+ 
+}
+
 export const getBySex = async (req, res ) => {
   const sex = (req.query.sex).toUpperCase();
   console.log(`Request sex: ${sex}`)
   if ( sex ){
     if ( sex === "HOMBRE" || sex === "MUJER"){
-      const queryBySex = await DataPiece.find(
-        { sexo : { $eq: sex } 
-      });
+      const queryBySex = await querySex( sex );
       res.send( queryBySex );
     }
     else{
@@ -139,8 +144,80 @@ export const getBySex = async (req, res ) => {
 }
 
 export const getDecease = async (req, res) => {
-  const queryDecease = await DataPiece.find( { fechaDef: { $ne: null} }, ['diabetes', 'epoc', 'asma', 'inmusupr', 'hipertension', 'cardiovascular', 'obesidad', 'renalCronica', 'tabaquismo','fechaDef']);
+  const queryDecease = await DataPiece.find( { fechaDef: { $ne: null} }, ['diabetes', 'epoc', 'asma', 'inmusupr', 'hipertension', 'cardiovascular', 'obesidad', 'renalCronica', 'tabaquismo','fechaDef', 'tipoPaciente']);
   res.send( queryDecease );
+}
+
+
+export const getPatients = async (req, res) => {
+  const HOSPITALIZED = 'HOSPITALIZADO';
+  const AMBULATORY = 'AMBULATORIO';
+  const HOMBRE = 'HOMBRE';
+  const MUJER = 'MUJER';
+  const numHospitalized = await DataPiece.find( { tipoPaciente: { $eq: HOSPITALIZED}}).countDocuments();
+  const numAmbulatory = await DataPiece.find( { tipoPaciente: { $eq: AMBULATORY}}).countDocuments();
+  
+  const query = await DataPiece.aggregate([
+    { "$facet": {
+      "Total": [
+        { $match : { tipoPaciente: { $exists: true }}},
+        { $count: "num" },
+      ],
+      "Ambulatorios": [
+        { $match : { tipoPaciente: { $exists: true, $eq: AMBULATORY }}},
+        { $count: "num" }
+      ],
+
+      "Hospitalizados": [
+        { $match : { tipoPaciente: { $exists: true, $eq: HOSPITALIZED }}},
+        { $count: "num" }
+      ],
+
+      "HombresHospitalizados": [
+        { $match: { $and : [ { tipoPaciente: { $exists: true, $eq: HOSPITALIZED }}, { sexo: {$eq: HOMBRE}}]} },
+        { $count: "num" }
+      ],
+      "MujeresHospitalizadas": [
+        { $match: { $and : [ { tipoPaciente: { $exists: true, $eq: HOSPITALIZED }}, { sexo: {$eq: MUJER}}]} },
+        { $count: "num" }
+      ],
+      "HombresAmbulatorios": [
+        { $match: { $and : [ { tipoPaciente: { $exists: true, $eq: AMBULATORY }}, { sexo: {$eq: HOMBRE}}]} },
+        { $count: "num" }
+      ],
+      "MujeresAmbulatorias": [
+        { $match: { $and : [ { tipoPaciente: { $exists: true, $eq: AMBULATORY }}, { sexo: {$eq: MUJER}}]} },
+        { $count: "num" },
+      ],
+      "Mujeres": [
+        { $match: {  sexo: {$eq: MUJER} }},
+        { $count: "num" }],
+        "Hombres": [
+          { $match: {  sexo: {$eq: HOMBRE} }},
+          { $count: "num" }]
+    }},
+    { $project: { "data": {
+        "Total": { $arrayElemAt: ["$Total.num", 0] },
+        "Ambulatorios": { $arrayElemAt: ["$Ambulatorios.num", 0] },
+        "Hospitalizados": { $arrayElemAt: ["$Hospitalizados.num", 0] },
+        "HombresHospitalizados": { $arrayElemAt: ["$HombresHospitalizados.num", 0] },
+        "MujeresHospitalizadas": { $arrayElemAt: ["$MujeresHospitalizadas.num", 0] },
+        "HombresAmbulatorios": { $arrayElemAt: ["$HombresAmbulatorios.num", 0] },
+        "MujeresAmbulatorias": { $arrayElemAt: ["$MujeresAmbulatorias.num", 0] },
+        "Mujeres": { $arrayElemAt: ["$Mujeres.num", 0] },
+        "Hombres": { $arrayElemAt: ["$Hombres.num", 0] },
+      } 
+    }}
+  ])
+
+  console.log( query )
+  res.status(200).json(query )
+
+  /*res.status(200).json( {
+    hospitalizados: numHospitalized,
+    ambulatorios: numAmbulatory,
+
+  })*/
 }
 
 
