@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import {
-  createDataPiece,
   uploadFile,
   getDataByAgeRange,
+  getData,
   getBySex,
   getDecease,
   getPatients
@@ -10,11 +10,12 @@ import {
 
 const router = Router();
 
-router.post('/', createDataPiece);
+router.get('/', getData);
 router.post('/file', uploadFile);
-router.get('/', getDataByAgeRange);
+router.get('/age', getDataByAgeRange);
 router.get('/sex', getBySex);
 router.get('/decease', getDecease)
 router.get('/patient', getPatients);
+
 
 export default router;

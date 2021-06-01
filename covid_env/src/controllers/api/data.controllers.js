@@ -2,10 +2,6 @@ import { Workbook } from 'exceljs';
 import DataPiece from '../../models/DataPiece';
 import dataPieceModelKeys from '../../static/api/dataPieceModelKeys.json';
 
-export const createDataPiece = (_, res) => {
-  res.send({ message: 'Piece of data created' });
-};
-
 export const uploadFile = async (req, res) => {
   const { files } = req.files;
   const workbook = new Workbook();
@@ -80,6 +76,11 @@ export const uploadFile = async (req, res) => {
     })
   );
   res.send({ message: 'Files uploaded', docsUploaded: docsUploadedCounter });
+};
+
+export const getData = async (req, res) => {
+  const queryDocs = await DataPiece.find();
+  res.send(queryDocs);
 };
 
 export const getDataByAgeRange = async (req, res) => {
