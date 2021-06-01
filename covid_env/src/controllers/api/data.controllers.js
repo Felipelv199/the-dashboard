@@ -81,3 +81,33 @@ export const uploadFile = async (req, res) => {
   );
   res.send({ message: 'Files uploaded', docsUploaded: docsUploadedCounter });
 };
+
+export const getDataByAgeRange = async (req, res) => {
+  const firstAge = Number(req.query.firstAge);
+  const lastAge = Number(req.query.lastAge);
+  if (isNaN(firstAge) || isNaN(lastAge)) {
+    res.status(400).send({
+      error: 'Bad Request',
+      message: "The query parameters given don't have the format required",
+    });
+    return;
+  }
+  if (firstAge < 0 || lastAge < 0 || firstAge > 100 || lastAge > 100) {
+    res.status(400).send({
+      error: 'Bad Request',
+      message: "The query parameters given don't have the format required",
+    });
+    return;
+  }
+  if (firstAge > lastAge) {
+    res.status(400).send({
+      error: 'Bad Request',
+      message: 'First age, cannot be greater than lastAge',
+    });
+    return;
+  }
+  const queryDocs = await DataPiece.find({
+    $and: [{ edad: { $gte: firstAge } }, { edad: { $lte: lastAge } }],
+  });
+  res.send(queryDocs);
+};
