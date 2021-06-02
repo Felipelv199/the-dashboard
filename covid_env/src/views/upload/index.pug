@@ -1,0 +1,10 @@
+html
+    head
+        title
+        link(rel='stylesheet' href='/bootstrap/bootstrap.css')
+    body
+        h1 Upload
+        form(class="input" action="/api/data/file" method="POST" enctype="multipart/form-data")
+            label(for="files" class="form-label") Upload files
+            input(name="files" class="form-control form-control-lg" id="files" type="file" multiple size="40")
+            input(type="submit" value="Submit")
