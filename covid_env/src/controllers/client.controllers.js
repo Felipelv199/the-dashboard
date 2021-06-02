@@ -6,8 +6,16 @@ export const uploadFile = (req, res) => {
   res.render('upload', {});
 };
 
+export const graphs = (req, res) => {
+  res.render('graphs', {});
+};
+
 export const age = (req, res) => {
-  res.render('graphs/age', {});
+  const { firstAge, lastAge } = req.query;
+  res.render('graphs/age', {
+    firstAge: firstAge ? firstAge : 0,
+    lastAge: lastAge ? lastAge : 0,
+  });
 };
 
 export const patient = (req, res) => {

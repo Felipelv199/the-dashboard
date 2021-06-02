@@ -23,10 +23,10 @@ g.append('text')
   .attr('text-anchor', 'middle')
   .attr('transform', 'rotate(-90)')
   .attr('font-weight', 'bold')
-  .text('N. of Persons with');
+  .text('N. of Persons');
 
-var gAxisX = g.append('g').attr('class', 'bottom axis');
-var gAxisY = g.append('g').attr('class', 'left axis');
+const gAxisX = g.append('g').attr('class', 'bottom axis');
+const gAxisY = g.append('g').attr('class', 'left axis');
 
 var persons = [];
 
@@ -37,14 +37,7 @@ const getData = async (fa, la) => {
   return response.status === 200 ? response.json() : [];
 };
 
-document.getElementById('age-range').addEventListener('submit', (event) => {
-  event.preventDefault();
-  const firstAge = document.getElementById('firstAge').value;
-  const lastAge = document.getElementById('lastAge').value;
-  event.target.reset();
-  persons = [];
-  getData(firstAge, lastAge).then((data) => loadD3(data.data, data.diseases));
-});
+getData(firstAge, lastAge).then((data) => loadD3(data.data, data.diseases));
 
 const loadD3 = (data, diseases) => {
   data.forEach((element) => {
@@ -76,7 +69,7 @@ const loadD3 = (data, diseases) => {
   persons = persons.filter((person) => person.diabetesCount > 0);
 
   const label = d3
-    .select('#age-range')
+    .select('form')
     .selectAll('label')
     .data(diseases)
     .enter()
