@@ -13,3 +13,7 @@ export const age = (req, res) => {
 export const patient = (req, res) => {
   res.render('graphs/patient', {});
 };
+
+export const decease = (req, res) => {
+  res.render('graphs/decease', {});
+};
