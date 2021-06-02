@@ -3,5 +3,9 @@ export const home = (req, res) => {
 };
 
 export const uploadFile = (req, res) => {
-  res.render('upload/index', {});
+  res.render('upload', {});
+};
+
+export const age = (req, res) => {
+  res.render('graphs/age', {});
 };
