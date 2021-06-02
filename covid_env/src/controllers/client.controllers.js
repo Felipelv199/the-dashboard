@@ -9,3 +9,7 @@ export const uploadFile = (req, res) => {
 export const age = (req, res) => {
   res.render('graphs/age', {});
 };
+
+export const patient = (req, res) => {
+  res.render('graphs/patient', {});
+};

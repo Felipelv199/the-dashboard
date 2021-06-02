@@ -113,7 +113,7 @@ export const getDataByAgeRange = async (req, res) => {
   res.send(queryDocs);
 };
 
-const querySex = async ( sex ) => {
+const querysex = async ( sex ) => {
   return await DataPiece.find(
     { sexo : { $eq: sex } 
   }).sort( { edad: 'asc'});
@@ -125,20 +125,20 @@ export const getBySex = async (req, res ) => {
   console.log(`Request sex: ${sex}`)
   if ( sex ){
     if ( sex === "HOMBRE" || sex === "MUJER"){
-      const queryBySex = await querySex( sex );
-      res.send( queryBySex );
+      const queryBysex = await querysex( sex );
+      res.send( queryBysex );
     }
     else{
       res.status(400).json({
         error: 'Bad Request',
-        message: 'Sex option invalid. Only valid sexes: "HOMBRE" & "MUJER"',
+        message: 'sex option invalid. Only valid sexes: "HOMBRE" & "MUJER"',
       });
     }
   }
   else{
     res.status(400).json({
       error: 'Bad Request',
-      message: 'Sex parameter not indicated',
+      message: 'sex parameter not indicated',
     });
   }
 }
@@ -177,34 +177,23 @@ export const getPatients = async (req, res) => {
     }},
     { $project: { "data": [
       {
-        sex: MUJER,
-        type: AMBULATORY,
-        count: { $arrayElemAt: ["$MujeresAmbulatorias.num", 0] },
+        mujer: { $arrayElemAt: ["$MujeresAmbulatorias.num", 0] },
+        hombre: { $arrayElemAt: ["$HombresAmbulatorios.num", 0] },
+        state: AMBULATORY,
 
       },
       {
-        sex: MUJER,
-        type: HOSPITALIZED,
-        count: { $arrayElemAt: ["$MujeresHospitalizadas.num", 0] },
+        mujer: { $arrayElemAt: ["$MujeresHospitalizadas.num", 0] },
+        hombre: { $arrayElemAt: ["$HombresHospitalizados.num", 0] },
+        state: HOSPITALIZED
       },
 
-      {
-        sex: HOMBRE,
-        type: AMBULATORY,
-        count: { $arrayElemAt: ["$HombresAmbulatorios.num", 0] },
-
-      },
-      {
-        sex: HOMBRE,
-        type: HOSPITALIZED,
-        count: { $arrayElemAt: ["$HombresHospitalizados.num", 0] },
-      }
       ]
     }}
   ])
 
   console.log( query )
-  res.status(200).json(query )
+  res.status(200).json(query[0].data )
 
   /*res.status(200).json( {
     hospitalizados: numHospitalized,
