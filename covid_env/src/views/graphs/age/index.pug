@@ -4,7 +4,15 @@ html
         link(rel='stylesheet' href='/bootstrap/bootstrap.css')
     body
         h1 Age
-        div(id="chart-area")
+        div
+            form(id="age-range")
+                input(id="firstAge" type="number" max=100 min=0)
+                input(id="lastAge" type="number" max=100 min=0)
+                input(type="submit")
+        div
+            form(id="radio")
+        div(id="box")
+            div(id="chart-area")
         script
             include ../../../static/d3/index.min.js
         script

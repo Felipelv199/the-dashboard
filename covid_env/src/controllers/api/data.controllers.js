@@ -3,11 +3,11 @@ import DataPiece from '../../models/DataPiece';
 import dataPieceModelKeys from '../../static/api/dataPieceModelKeys.json';
 
 export const uploadFile = async (req, res) => {
-  const { files } = req.files;
+  const { file } = req.files;
   const workbook = new Workbook();
   let workbookFile;
   try {
-    workbookFile = await workbook.xlsx.load(files.data);
+    workbookFile = await workbook.xlsx.load(file.data);
   } catch (error) {
     res
       .status(500)
@@ -49,7 +49,11 @@ export const uploadFile = async (req, res) => {
       let doc = {};
       row.eachCell(
         { includeEmpty: true },
-        (cell) => (doc = { ...doc, [sheetHeaders[cell.col]]: cell.value })
+        (cell) =>
+          (doc = {
+            ...doc,
+            [sheetHeaders[cell.col]]: cell.value,
+          })
       );
       let queryDoc;
       try {
@@ -107,10 +111,16 @@ export const getDataByAgeRange = async (req, res) => {
     });
     return;
   }
-  const queryDocs = await DataPiece.find({
-    $and: [{ edad: { $gte: firstAge } }, { edad: { $lte: lastAge } }],
+  const queryDocs = await DataPiece.find(
+    {
+      $and: [{ edad: { $gte: firstAge } }, { edad: { $lte: lastAge } }],
+    },
+    'edad diabetes hipertension obesidad'
+  ).sort('edad');
+  res.send({
+    data: queryDocs,
+    diseases: ['diabetes', 'hypertension', 'obesity'],
   });
-  res.send(queryDocs);
 };
 
 const querysex = async ( sex ) => {
@@ -120,11 +130,10 @@ const querysex = async ( sex ) => {
  
 }
 
-export const getBySex = async (req, res ) => {
+export const getBySex = async (req, res) => {
   const sex = (req.query.sex).toUpperCase();
-  console.log(`Request sex: ${sex}`)
-  if ( sex ){
-    if ( sex === "HOMBRE" || sex === "MUJER"){
+  if (sex){
+    if (sex === "HOMBRE" || sex === "MUJER"){
       const queryBysex = await querysex( sex );
       res.send( queryBysex );
     }
@@ -134,20 +143,31 @@ export const getBySex = async (req, res ) => {
         message: 'sex option invalid. Only valid sexes: "HOMBRE" & "MUJER"',
       });
     }
-  }
-  else{
+  } else {
     res.status(400).json({
       error: 'Bad Request',
       message: 'sex parameter not indicated',
     });
   }
-}
+};
 
 export const getDecease = async (req, res) => {
-  const queryDecease = await DataPiece.find( { fechaDef: { $ne: null} }, ['diabetes', 'epoc', 'asma', 'inmusupr', 'hipertension', 'cardiovascular', 'obesidad', 'renalCronica', 'tabaquismo','fechaDef', 'tipoPaciente', 'sexo']);
-  res.send( queryDecease );
-}
-
+  const queryDecease = await DataPiece.find({ fechaDef: { $ne: null } }, [
+    'diabetes',
+    'epoc',
+    'asma',
+    'inmusupr',
+    'hipertension',
+    'cardiovascular',
+    'obesidad',
+    'renalCronica',
+    'tabaquismo',
+    'fechaDef',
+    'tipoPaciente',
+    'sexo',
+  ]);
+  res.send(queryDecease);
+};
 
 export const getPatients = async (req, res) => {
   const HOSPITALIZED = 'HOSPITALIZADO';
@@ -156,8 +176,8 @@ export const getPatients = async (req, res) => {
   const MUJER = 'MUJER';
   
   const query = await DataPiece.aggregate([
-    { "$facet": {
-
+    {
+      $facet: {
       "HombresHospitalizados": [
         { $match: { $and : [ { tipoPaciente: { $exists: true, $eq: HOSPITALIZED }}, { sexo: {$eq: HOMBRE}}]} },
         { $count: "num" }
@@ -187,7 +207,20 @@ export const getPatients = async (req, res) => {
         hombre: { $arrayElemAt: ["$HombresHospitalizados.num", 0] },
         state: HOSPITALIZED
       },
-
+    },
+    {
+      $project: {
+        data: [
+          {
+            sex: MUJER,
+            type: AMBULATORY,
+            count: { $arrayElemAt: ['$MujeresAmbulatorias.num', 0] },
+          },
+          {
+            sex: MUJER,
+            type: HOSPITALIZED,
+            count: { $arrayElemAt: ['$MujeresHospitalizadas.num', 0] },
+          },
       ]
     }}
   ])
@@ -200,6 +233,4 @@ export const getPatients = async (req, res) => {
     ambulatorios: numAmbulatory,
 
   })*/
-}
-
-
+};
