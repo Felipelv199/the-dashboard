@@ -1,0 +1,23 @@
+html
+    head
+        title
+        link(rel='stylesheet' href='/bootstrap/bootstrap.css')
+    body
+        nav(class="navbar navbar-light bg-light")
+            div(class="container")
+                a(class="navbar-brand" href="http://localhost:8080/graphs") Graphs
+                a(class="nav-link active" href="http://localhost:8080/graphs" tabindex="-1") Upload Data
+        div
+            form(id="age-range") 
+                div(class="container")
+                    div(class="row")
+                        h4 Age Graph
+                    div(class="row")
+                        div(class="col")
+                            input(id="firstAge" class="form-control" type="number" placeholder="First Age" max=100 min=0)
+                        div(class="col")
+                            input(id="lastAge" class="form-control" type="number" placeholder="Last Age" max=100 min=0)
+                        div(class="col")
+                            input(type="submit" class="btn btn-primary" value="Go")
+        script
+            include index.js
