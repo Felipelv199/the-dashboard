@@ -1,0 +1,15 @@
+html
+    head
+        title
+        link(rel='stylesheet' href='/bootstrap/bootstrap.css')
+    body
+        h1 Decease
+        span mujer
+        input(id="mujer" checked type='radio',name='severity',value ='Minor')
+        span hombre
+        input(id="hombre" type='radio',name='severity',value ='Minor')
+        div(id="chart-area")
+        script
+            include ../../../static/d3/index.min.js
+        script
+            include index.js

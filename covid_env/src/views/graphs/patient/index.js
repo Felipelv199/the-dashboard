@@ -87,8 +87,6 @@ var arc = d3.arc()
       }
 
      
-
-
       function arcTween(a) {
         var i = d3.interpolate(this._current, a);
         this._current = i(0);
@@ -96,15 +94,6 @@ var arc = d3.arc()
           return arc(i(t));
         };
 
-}
-
-
-function getValues( values, flag ){
-    for (var i = 0; i < values.length; i++){
-        if ( values[i].key === flag.toUpperCase() ){
-            return values[i].values;
-        }
-    }
 }
 
 }

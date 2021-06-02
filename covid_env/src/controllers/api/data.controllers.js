@@ -144,7 +144,17 @@ export const getBySex = async (req, res ) => {
 }
 
 export const getDecease = async (req, res) => {
-  const queryDecease = await DataPiece.find( { fechaDef: { $ne: null} }, ['diabetes', 'epoc', 'asma', 'inmusupr', 'hipertension', 'cardiovascular', 'obesidad', 'renalCronica', 'tabaquismo','fechaDef', 'tipoPaciente', 'sexo']);
+  const HOSPITALES = ["IMSS", "IMSS-BIENESTAR", "DIF", "ESTATAL", "ISSSTE", "MUNICIPAL", "PEMEX", "SSA", 
+  "UNIVERSITARIO", "NO ESPECIFICADO", "PRIVADA", "SEDENA", "CRUZ ROJA", "SEMAR"]
+  const queryDecease = await DataPiece.find( { fechaDef: { $ne: null} }, {'sector': 1, 'sexo': 1, '_id': 0 });
+  /*const queryDecease = await DataPiece.aggregate([
+    {
+      "$facet": {
+        "IMSS": [{ $and : [ { fechaDef: { $ne: null} }, { sector: { $eq: }}]
+      ]
+      }
+    }
+  ])*/
   res.send( queryDecease );
 }
 
