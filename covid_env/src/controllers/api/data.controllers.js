@@ -144,7 +144,7 @@ export const getBySex = async (req, res ) => {
 }
 
 export const getDecease = async (req, res) => {
-  const queryDecease = await DataPiece.find( { fechaDef: { $ne: null} }, ['diabetes', 'epoc', 'asma', 'inmusupr', 'hipertension', 'cardiovascular', 'obesidad', 'renalCronica', 'tabaquismo','fechaDef', 'tipoPaciente']);
+  const queryDecease = await DataPiece.find( { fechaDef: { $ne: null} }, ['diabetes', 'epoc', 'asma', 'inmusupr', 'hipertension', 'cardiovascular', 'obesidad', 'renalCronica', 'tabaquismo','fechaDef', 'tipoPaciente', 'sexo']);
   res.send( queryDecease );
 }
 
@@ -154,24 +154,9 @@ export const getPatients = async (req, res) => {
   const AMBULATORY = 'AMBULATORIO';
   const HOMBRE = 'HOMBRE';
   const MUJER = 'MUJER';
-  const numHospitalized = await DataPiece.find( { tipoPaciente: { $eq: HOSPITALIZED}}).countDocuments();
-  const numAmbulatory = await DataPiece.find( { tipoPaciente: { $eq: AMBULATORY}}).countDocuments();
   
   const query = await DataPiece.aggregate([
     { "$facet": {
-      "Total": [
-        { $match : { tipoPaciente: { $exists: true }}},
-        { $count: "num" },
-      ],
-      "Ambulatorios": [
-        { $match : { tipoPaciente: { $exists: true, $eq: AMBULATORY }}},
-        { $count: "num" }
-      ],
-
-      "Hospitalizados": [
-        { $match : { tipoPaciente: { $exists: true, $eq: HOSPITALIZED }}},
-        { $count: "num" }
-      ],
 
       "HombresHospitalizados": [
         { $match: { $and : [ { tipoPaciente: { $exists: true, $eq: HOSPITALIZED }}, { sexo: {$eq: HOMBRE}}]} },
@@ -188,25 +173,33 @@ export const getPatients = async (req, res) => {
       "MujeresAmbulatorias": [
         { $match: { $and : [ { tipoPaciente: { $exists: true, $eq: AMBULATORY }}, { sexo: {$eq: MUJER}}]} },
         { $count: "num" },
-      ],
-      "Mujeres": [
-        { $match: {  sexo: {$eq: MUJER} }},
-        { $count: "num" }],
-        "Hombres": [
-          { $match: {  sexo: {$eq: HOMBRE} }},
-          { $count: "num" }]
+      ]
     }},
-    { $project: { "data": {
-        "Total": { $arrayElemAt: ["$Total.num", 0] },
-        "Ambulatorios": { $arrayElemAt: ["$Ambulatorios.num", 0] },
-        "Hospitalizados": { $arrayElemAt: ["$Hospitalizados.num", 0] },
-        "HombresHospitalizados": { $arrayElemAt: ["$HombresHospitalizados.num", 0] },
-        "MujeresHospitalizadas": { $arrayElemAt: ["$MujeresHospitalizadas.num", 0] },
-        "HombresAmbulatorios": { $arrayElemAt: ["$HombresAmbulatorios.num", 0] },
-        "MujeresAmbulatorias": { $arrayElemAt: ["$MujeresAmbulatorias.num", 0] },
-        "Mujeres": { $arrayElemAt: ["$Mujeres.num", 0] },
-        "Hombres": { $arrayElemAt: ["$Hombres.num", 0] },
-      } 
+    { $project: { "data": [
+      {
+        sex: MUJER,
+        type: AMBULATORY,
+        count: { $arrayElemAt: ["$MujeresAmbulatorias.num", 0] },
+
+      },
+      {
+        sex: MUJER,
+        type: HOSPITALIZED,
+        count: { $arrayElemAt: ["$MujeresHospitalizadas.num", 0] },
+      },
+
+      {
+        sex: HOMBRE,
+        type: AMBULATORY,
+        count: { $arrayElemAt: ["$HombresAmbulatorios.num", 0] },
+
+      },
+      {
+        sex: HOMBRE,
+        type: HOSPITALIZED,
+        count: { $arrayElemAt: ["$HombresHospitalizados.num", 0] },
+      }
+      ]
     }}
   ])
 
