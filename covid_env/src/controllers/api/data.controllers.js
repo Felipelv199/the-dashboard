@@ -124,7 +124,7 @@ export const getDataByAgeRange = async (req, res) => {
 };
 
 const querysex = async (sex) => {
-  return await DataPiece.find({ sexo: { $eq: sex } }).sort({ edad: 'asc' });
+  return await DataPiece.find({ sexo: { $eq: sex } }, {'edad': 1, 'sexo': 1, '_id': 0}).sort({ edad: 'asc' });
 };
 
 export const getBySex = async (req, res) => {
@@ -149,8 +149,6 @@ export const getBySex = async (req, res) => {
 
 export const getDecease = async (req, res) => {
 
-  const HOSPITALES = ["IMSS", "IMSS-BIENESTAR", "DIF", "ESTATAL", "ISSSTE", "MUNICIPAL", "PEMEX", "SSA", 
-  "UNIVERSITARIO", "NO ESPECIFICADO", "PRIVADA", "SEDENA", "CRUZ ROJA", "SEMAR"]
   const queryDecease = await DataPiece.find( { fechaDef: { $ne: null} }, {'sector': 1, 'sexo': 1, '_id': 0 });
   
   res.send( queryDecease );
@@ -227,24 +225,8 @@ export const getPatients = async (req, res) => {
             state: HOSPITALIZED,
           },
         ],
-      },
     },
-    {
-      $project: {
-        data: [
-          {
-            sex: MUJER,
-            type: AMBULATORY,
-            count: { $arrayElemAt: ['$MujeresAmbulatorias.num', 0] },
-          },
-          {
-            sex: MUJER,
-            type: HOSPITALIZED,
-            count: { $arrayElemAt: ['$MujeresHospitalizadas.num', 0] },
-          },
-        ],
-      },
-    },
+  }
   ]);
 
   console.log(query);
