@@ -1,7 +1,7 @@
-import { Workbook } from 'exceljs';
+export const home = (req, res) => {
+  res.render('index', {});
+};
 
 export const uploadFile = (req, res) => {
-    res.status(200).json({
-        message: "All fine"
-    })
+  res.render('upload/index', {});
 };

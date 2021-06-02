@@ -1,8 +1,9 @@
 import { Router } from 'express';
-import { uploadFile } from '../controllers/client.controllers';
+import { home, uploadFile } from '../controllers/client.controllers';
 
 const router = Router();
 
-router.post('/upload', uploadFile);
+router.get('/', home);
+router.get('/upload', uploadFile);
 
 export default router;
