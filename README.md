@@ -45,6 +45,6 @@ Once you start the app, you will need to enter this to this url in order to fill
 ```
 http://localhost:8080/upload
 ```
-You will need to pass the export_dataframe.xlsx file.
+You will need to pass the export_dataframe.xlsx file. If the file was successfully uploaded, it will redirect you to this url *http://localhost:8080/graphs*.
 
 You are good to go!
