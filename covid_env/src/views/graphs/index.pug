@@ -1,0 +1,44 @@
+html
+    head
+        title
+        link(rel='stylesheet' href='/bootstrap/bootstrap.css')
+    body
+        nav(class="navbar navbar-light bg-light")
+            div(class="container")
+                a(class="navbar-brand") Graphs
+                a(class="nav-link active" href="/upload" tabindex="-1") Upload Data
+        
+        div(class="container")
+            div(class="row")
+                h4 Age Graph
+            div(class="row")
+                form(id="age-range") 
+                    div(class="container")
+                        div(class="row")
+                            div(class="col")
+                                input(id="firstAge" class="form-control" type="number" placeholder="First Age" max=100 min=0)
+                            div(class="col")
+                                input(id="lastAge" class="form-control" type="number" placeholder="Last Age" max=100 min=0)
+                            div(class="col")
+                                input(type="submit" class="btn btn-primary" value="Age")
+
+        div(class="container")
+            div(class="row")
+                h4 Patient Graph
+            div(class="row")
+                div(class="col")
+                a(class='nav-link active' href="/graphs/patient" ) Patient
+        div(class="container")
+            div(class="row")
+                h4 Decease Graph
+            div(class="row")
+                div(class="col")
+                a(class='nav-link active' href="/graphs/decease" ) Decease
+        div(class="container")
+            div(class="row")
+                h4 Hospitalized Graph
+            div(class="row")
+                div(class="col")
+                a(class='nav-link active' href="/graphs/hospitalized" ) Hospitalized
+        script
+            include index.js

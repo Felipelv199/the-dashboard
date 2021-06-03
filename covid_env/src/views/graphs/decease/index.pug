@@ -1,0 +1,20 @@
+html
+    head
+        title
+        link(rel='stylesheet' href='/bootstrap/bootstrap.css')
+    body
+        nav(class="navbar navbar-light bg-light")
+            div(class="container")
+                a(class="navbar-brand") Decease
+                a(class="nav-link active" href="/graphs" tabindex="-1") Graphs
+        
+        div(class="text-center")
+            span(class="px-2") mujer 
+            input(id="mujer" checked type='radio',name='severity',value ='Minor')
+            span(class="px-2") hombre 
+            input(id="hombre" type='radio',name='severity',value ='Minor')
+            div(id="chart-area")
+        script
+            include ../../../static/d3/index.min.js
+        script
+            include index.js

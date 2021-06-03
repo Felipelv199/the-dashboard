@@ -1,0 +1,23 @@
+html
+    head
+        title
+        link(rel='stylesheet' href='/bootstrap/bootstrap.css')
+        style
+            include style.css
+    body
+        nav(class="navbar navbar-light bg-light")
+            div(class="container")
+                a(class="navbar-brand" href="http://localhost:8080/graphs/age") Sickness in people by age
+                a(class="nav-link active" href="http://localhost:8080/graphs" tabindex="-1") Graphs
+        div(class="container")
+            div(class="row")
+                div(class="col")
+                    form(id="radio")
+            div(class="row")
+                div(id="chart-area")
+        script.
+            var firstAge=#{firstAge};
+            var lastAge=#{lastAge};
+        script
+            include ../../../static/d3/index.min.js
+            include index.js
