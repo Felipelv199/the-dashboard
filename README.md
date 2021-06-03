@@ -40,4 +40,11 @@ To run the project in your terminal:
 ```
 npm start 
 ```
+
+Once you start the app, you will need to enter this to this url in order to fill your local db.
+```
+http://localhost:8080/upload
+```
+You will need to pass the export_dataframe.xlsx file.
+
 You are good to go!
