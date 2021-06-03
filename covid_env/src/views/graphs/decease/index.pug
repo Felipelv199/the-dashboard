@@ -3,12 +3,20 @@ html
         title
         link(rel='stylesheet' href='/bootstrap/bootstrap.css')
     body
-        h1 Decease
-        span mujer
-        input(id="mujer" checked type='radio',name='severity',value ='Minor')
-        span hombre
-        input(id="hombre" type='radio',name='severity',value ='Minor')
-        div(id="chart-area")
+        nav(class="navbar navbar-light bg-light")
+            div(class="container")
+                a(class="navbar-brand" href="http://localhost:8080/graphs") Graphs
+                a(class="nav-link active" href="http://localhost:8080/graphs" tabindex="-1") Upload Data
+                a(class='nav-link active' href="/graphs/patient" ) Patient
+                a(class='nav-link active' href="/graphs/decease" ) Decease
+        
+        div(class="text-center")
+            h1 Decease
+            span(class="px-2") mujer 
+            input(id="mujer" checked type='radio',name='severity',value ='Minor')
+            span(class="px-2") hombre 
+            input(id="hombre" type='radio',name='severity',value ='Minor')
+            div(id="chart-area")
         script
             include ../../../static/d3/index.min.js
         script
