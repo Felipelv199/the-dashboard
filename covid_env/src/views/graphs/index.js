@@ -5,5 +5,5 @@ document.getElementById('age-range').addEventListener('submit', (event) => {
   event.target.reset();
   location.href = `http://localhost:8080/graphs/age?firstAge=${
     firstAge === '' ? 0 : firstAge
-  }&lastAge=${lastAge === '' ? 0 : lastAge}`;
+  }&lastAge=${lastAge === '' ? 100 : lastAge}`;
 });

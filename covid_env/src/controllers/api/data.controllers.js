@@ -3,6 +3,7 @@ import DataPiece from '../../models/DataPiece';
 import dataPieceModelKeys from '../../static/api/dataPieceModelKeys.json';
 
 export const uploadFile = async (req, res) => {
+  console.log(req.body);
   const { file } = req.files;
   const workbook = new Workbook();
   let workbookFile;
