@@ -27,7 +27,7 @@ By default, MongoDB listens for connections from clients on port 27017, and stor
 mongod
 ```
 
-You will need to create a file named .env inside the covide_env folder, these is the root of the npm environment. Inside of these document add the following lines, with your own info.
+You will need to create a file named .env inside the covide_env folder, these is the root of the npm environment. Inside of these document add the following lines, modifie the values with your own info.
 ```
 PORT=8080
 MONGOOSE_URI_DEV=mongodb://127.0.0.1:27017/covid-db
