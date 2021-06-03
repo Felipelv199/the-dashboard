@@ -27,10 +27,17 @@ By default, MongoDB listens for connections from clients on port 27017, and stor
 mongod
 ```
 
-Install modules used in the project with npm install in your terminal:
+To install the modules used in the project:
+```
+npm install
+```
 npm install (in a package directory, no arguments):
 Install the dependencies in the local node_modules folder.
 In global mode (ie, with -g or --global appended to the command), it installs the current package context (ie, the current working directory) as a global package.
 By default, npm install will install all modules listed as dependencies in package.json.
 
-Then to run the project, npm start in your terminal and you are good to go!
+To run the project in your terminal:
+```
+npm start 
+```
+You are good to go!
