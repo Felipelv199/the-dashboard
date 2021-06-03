@@ -21,7 +21,11 @@ After installing MongoDB, we will need to add it to the environment variables:
 9. click “OK” until you are out of the system properties
 
 Start mongod Processes
-By default, MongoDB listens for connections from clients on port 27017, and stores data in the /data/db directory. On Windows, this path is on the drive from which you start MongoDB. For example, if you do not specify a --dbpath, starting a MongoDB server on the C:\ drive stores all data files in C:\data\db. To start MongoDB using all defaults, issue the following command at the system shell: mongod
+By default, MongoDB listens for connections from clients on port 27017, and stores data in the /data/db directory. On Windows, this path is on the drive from which you start MongoDB. For example, if you do not specify a --dbpath, starting a MongoDB server on the C:\ drive stores all data files in C:\data\db. To start MongoDB using all defaults, issue the following command at the system shell: 
+
+```
+mongod
+```
 
 Install modules used in the project with npm install in your terminal:
 npm install (in a package directory, no arguments):
