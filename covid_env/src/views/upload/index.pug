@@ -3,8 +3,16 @@ html
         title
         link(rel='stylesheet' href='/bootstrap/bootstrap.css')
     body
-        h1 Upload
+        nav(class="navbar navbar-light bg-light")
+            div(class="container")
+                a(class="navbar-brand") Upload files
+                a(class="nav-link active" href="/graphs" tabindex="-1") Graphs
         form(class="input" action="/api/data/file" method="POST" enctype="multipart/form-data")
-            label(for="files" class="form-label") Upload files
-            input(name="files" class="form-control form-control-lg" id="files" type="file" multiple size="40")
-            input(type="submit" value="Submit")
+            div(class="container")
+                div(class="row")
+                    input(name="files" class="form-control form-control-lg" id="files" type="file" multiple size="40")
+                div(class="row")
+                    div(class="col")
+                        input(id="upload" type="button" value="Upload")
+        script
+            include index.js

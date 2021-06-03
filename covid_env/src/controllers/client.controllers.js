@@ -14,7 +14,7 @@ export const age = (req, res) => {
   const { firstAge, lastAge } = req.query;
   res.render('graphs/age', {
     firstAge: firstAge ? firstAge : 0,
-    lastAge: lastAge ? lastAge : 0,
+    lastAge: lastAge ? lastAge : 100,
   });
 };
 
