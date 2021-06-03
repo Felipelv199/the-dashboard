@@ -6,6 +6,7 @@ import {
   patient,
   decease,
   graphs,
+  hospitalized,
 } from '../controllers/client.controllers';
 
 const router = Router();
@@ -16,5 +17,6 @@ router.get('/graphs', graphs);
 router.get('/graphs/age', age);
 router.get('/graphs/patient', patient);
 router.get('/graphs/decease', decease);
+router.get('/graphs/hospitalized', hospitalized);
 
 export default router;

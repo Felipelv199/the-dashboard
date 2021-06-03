@@ -25,3 +25,7 @@ export const patient = (req, res) => {
 export const decease = (req, res) => {
   res.render('graphs/decease', {});
 };
+
+export const hospitalized = (req, res) => {
+  res.render('graphs/hospitalized', {});
+};

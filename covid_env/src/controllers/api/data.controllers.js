@@ -124,7 +124,10 @@ export const getDataByAgeRange = async (req, res) => {
 };
 
 const querysex = async (sex) => {
-  return await DataPiece.find({ sexo: { $eq: sex } }, {'edad': 1, 'sexo': 1, '_id': 0}).sort({ edad: 'asc' });
+  return await DataPiece.find(
+    { sexo: { $eq: sex } },
+    { edad: 1, sexo: 1, _id: 0 }
+  ).sort({ edad: 'asc' });
 };
 
 export const getBySex = async (req, res) => {
@@ -148,13 +151,13 @@ export const getBySex = async (req, res) => {
 };
 
 export const getDecease = async (req, res) => {
+  const queryDecease = await DataPiece.find(
+    { fechaDef: { $ne: null } },
+    { sector: 1, sexo: 1, _id: 0 }
+  );
 
-  const queryDecease = await DataPiece.find( { fechaDef: { $ne: null} }, {'sector': 1, 'sexo': 1, '_id': 0 });
-  
-  res.send( queryDecease );
-}
-
-
+  res.send(queryDecease);
+};
 
 export const getPatients = async (req, res) => {
   const HOSPITALIZED = 'HOSPITALIZADO';
@@ -225,8 +228,8 @@ export const getPatients = async (req, res) => {
             state: HOSPITALIZED,
           },
         ],
+      },
     },
-  }
   ]);
 
   console.log(query);
@@ -237,4 +240,20 @@ export const getPatients = async (req, res) => {
     ambulatorios: numAmbulatory,
 
   })*/
+};
+
+export const getPatientsHospitalizedIntubated = async (req, res) => {
+  let queryDocs = undefined;
+  try {
+    queryDocs = await DataPiece.find(
+      { tipoPaciente: { $eq: 'HOSPITALIZADO' } },
+      'edad tipoPaciente intubado neumonia entidadRes'
+    ).sort('edad');
+  } catch (error) {
+    res
+      .status(500)
+      .send({ error: 'Internal Server Error', message: error.message });
+    return;
+  }
+  res.send(queryDocs);
 };
