@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var express_1 = require("express");
+var data_controllers_1 = require("../../controllers/api/data.controllers");
+var router = express_1.Router();
+router.get('/', data_controllers_1.getData);
+router.post('/file', data_controllers_1.uploadFile);
+router.get('/age', data_controllers_1.getDataByAgeRange);
+router.get('/sex', data_controllers_1.getBySex);
+router.get('/decease', data_controllers_1.getDecease);
+router.get('/patient', data_controllers_1.getPatients);
+router.get('/hospitalized', data_controllers_1.getPatientsHospitalizedIntubated);
+exports.default = router;

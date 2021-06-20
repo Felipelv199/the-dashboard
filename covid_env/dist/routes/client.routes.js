@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var express_1 = require("express");
+var client_controllers_1 = require("../controllers/client.controllers");
+var router = express_1.Router();
+router.get('/', client_controllers_1.home);
+router.get('/upload', client_controllers_1.uploadFile);
+router.get('/graphs', client_controllers_1.graphs);
+router.get('/graphs/age', client_controllers_1.age);
+router.get('/graphs/patient', client_controllers_1.patient);
+router.get('/graphs/decease', client_controllers_1.decease);
+router.get('/graphs/hospitalized', client_controllers_1.hospitalized);
+exports.default = router;

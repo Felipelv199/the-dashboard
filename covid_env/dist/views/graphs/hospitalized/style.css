@@ -1,0 +1,13 @@
+#radio {
+  display: flex;
+  justify-content: center;
+  padding: 25px;
+}
+#chart-area {
+  display: flex;
+  justify-content: center;
+}
+label {
+  margin-left: 10px;
+  margin-right: 10px;
+}
