@@ -1,14 +1,30 @@
-import { Workbook } from 'exceljs';
-import DataPiece from '../../models/DataPiece';
+import { Request, Response } from 'express';
+import { Row, Workbook } from 'exceljs';
+import DataPiece, { Document } from '../../models/DataPiece';
 import dataPieceModelKeys from '../../static/api/dataPieceModelKeys.json';
+import { UploadedFile } from 'express-fileupload';
 
-export const uploadFile = async (req, res) => {
-  console.log(req.body);
-  const { file } = req.files;
+export const uploadFile = async (req: Request, res: Response): Promise<any> => {
+  const { files } = req;
+  if (typeof files === 'undefined' || files === null) {
+    res.status(400).send({
+      error: 'Bad Request',
+      message: 'Not file provided',
+    });
+    return;
+  }
+  const uploadedFile = files.file as UploadedFile;
+  if (uploadedFile.name === 'undefined') {
+    res.status(400).send({
+      error: 'Bad Request',
+      message: 'Upload only one file',
+    });
+    return;
+  }
   const workbook = new Workbook();
-  let workbookFile;
+  let workbookFile: Workbook;
   try {
-    workbookFile = await workbook.xlsx.load(file.data);
+    workbookFile = await workbook.xlsx.load(uploadedFile.data);
   } catch (error) {
     res
       .status(500)
@@ -16,12 +32,21 @@ export const uploadFile = async (req, res) => {
     return;
   }
   const sheet = workbookFile.worksheets[0];
-  let sheetHeaders = {};
+  let sheetHeaders: any = {};
   let docsUploadedCounter = 0;
   let validColumns = true;
-  sheet.getRows(1, 1).forEach((row) =>
+  let rows = sheet.getRows(1, 1);
+  if (typeof rows === 'undefined') {
+    res.status(400).send({
+      error: 'Bad Request',
+      message: 'Excel file missing sheets',
+    });
+    return;
+  }
+  rows.forEach((row: Row) =>
     row.eachCell((cell, colNumber) => {
-      const valueParsed = cell.value.split('_').join('');
+      const cellValue = cell.value as string;
+      const valueParsed = cellValue.split('_').join('');
       if (
         valueParsed.toLowerCase() !==
         dataPieceModelKeys[colNumber - 1].toLowerCase()
@@ -35,19 +60,23 @@ export const uploadFile = async (req, res) => {
     })
   );
   if (!validColumns) {
-    res
-      .status(400)
-      .send({
-        error: 'Bad Request',
-        message: 'Some columns are missing inside the first sheet',
-      })
-      .end();
+    res.status(400).send({
+      error: 'Bad Request',
+      message: 'Some columns are missing inside the first sheet',
+    });
     return;
   }
-  const rows = sheet.getRows(2, sheet.rowCount);
+  rows = sheet.getRows(2, sheet.rowCount);
+  if (typeof rows === 'undefined') {
+    res.status(400).send({
+      error: 'Bad Request',
+      message: 'Missing data bellow the headers',
+    });
+    return;
+  }
   await Promise.all(
     rows.map(async (row) => {
-      let doc = {};
+      let doc: Document = {};
       row.eachCell(
         { includeEmpty: true },
         (cell) =>
@@ -83,12 +112,20 @@ export const uploadFile = async (req, res) => {
   res.send({ message: 'Files uploaded', docsUploaded: docsUploadedCounter });
 };
 
-export const getData = async (req, res) => {
-  const queryDocs = await DataPiece.find();
-  res.send(queryDocs);
+export const getData = async (req: Request, res: Response) => {
+  try {
+    const queryDocs = await DataPiece.find();
+    res.send(queryDocs);
+  } catch (error) {
+    res.status(400).send({
+      error: 'Internal Server Error',
+      message: error.message,
+    });
+    return;
+  }
 };
 
-export const getDataByAgeRange = async (req, res) => {
+export const getDataByAgeRange = async (req: Request, res: Response) => {
   const firstAge = Number(req.query.firstAge);
   const lastAge = Number(req.query.lastAge);
   if (isNaN(firstAge) || isNaN(lastAge)) {
@@ -124,15 +161,12 @@ export const getDataByAgeRange = async (req, res) => {
   });
 };
 
-const querysex = async (sex) => {
-  return await DataPiece.find(
-    { sexo: { $eq: sex } },
-    { edad: 1, sexo: 1, _id: 0 }
-  ).sort({ edad: 'asc' });
-};
-
-export const getBySex = async (req, res) => {
-  const sex = req.query.sex.toUpperCase();
+export const getBySex = async (req: Request, res: Response) => {
+  let sex = req.query.sex;
+  if (typeof sex !== 'string') {
+    return;
+  }
+  sex = sex.toUpperCase();
   if (sex) {
     if (sex === 'HOMBRE' || sex === 'MUJER') {
       const queryBysex = await querysex(sex);
@@ -151,7 +185,7 @@ export const getBySex = async (req, res) => {
   }
 };
 
-export const getDecease = async (req, res) => {
+export const getDecease = async (req: Request, res: Response) => {
   const queryDecease = await DataPiece.find(
     { fechaDef: { $ne: null } },
     { sector: 1, sexo: 1, _id: 0 }
@@ -160,7 +194,14 @@ export const getDecease = async (req, res) => {
   res.send(queryDecease);
 };
 
-export const getPatients = async (req, res) => {
+const querysex = async (sex: string) => {
+  return await DataPiece.find(
+    { sexo: { $eq: sex } },
+    { edad: 1, sexo: 1, _id: 0 }
+  ).sort({ edad: 'asc' });
+};
+
+export const getPatients = async (req: Request, res: Response) => {
   const HOSPITALIZED = 'HOSPITALIZADO';
   const AMBULATORY = 'AMBULATORIO';
   const HOMBRE = 'HOMBRE';
@@ -235,15 +276,12 @@ export const getPatients = async (req, res) => {
 
   console.log(query);
   res.status(200).json(query[0].data);
-
-  /*res.status(200).json( {
-    hospitalizados: numHospitalized,
-    ambulatorios: numAmbulatory,
-
-  })*/
 };
 
-export const getPatientsHospitalizedIntubated = async (req, res) => {
+export const getPatientsHospitalizedIntubated = async (
+  req: Request,
+  res: Response
+) => {
   let queryDocs = undefined;
   try {
     queryDocs = await DataPiece.find(

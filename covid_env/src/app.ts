@@ -1,4 +1,4 @@
-import express from 'express';
+import express from "express";
 import morgan from 'morgan';
 import cors from 'cors';
 import fileupload from 'express-fileupload';
@@ -19,8 +19,6 @@ app.use(
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'pug');
-
 app.use('/api/data', dataRoutes);
 app.use('/', clientRoutes);
-
 export default app;
